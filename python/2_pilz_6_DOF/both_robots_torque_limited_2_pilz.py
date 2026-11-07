@@ -416,13 +416,13 @@ if (plot == 1):
     y_box = []
     z_box = []
     
-    ranghe = np.size(sol)/(4*nq+5)
+    ranghe = np.size(sol)//(4*nq+5)
     
     for k in range(2*ranghe):
         if (k % 2 == 0):
             #JOINT ANGLES
             qc_opt = []
-            qc_opt.append(sol[14*k+(k-k/2):14*k+(k-k/2)+2*nq].tolist())
+            qc_opt.append(sol[14*k+(k-k//2):14*k+(k-k//2)+2*nq].tolist())
             qc_opt = qc_opt[0]
             #Extract first robot coordinates
             q1_opt_f.append(qc_opt[0])
@@ -439,13 +439,13 @@ if (plot == 1):
             q5_opt_s.append(qc_opt[10])
             q6_opt_s.append(qc_opt[11])
             
-            x_box.append(sol[14*k+(k-k/2)+2*nq])
-            y_box.append(sol[14*k+(k-k/2)+2*nq+1])
-            z_box.append(sol[14*k+(k-k/2)+2*nq+2])
+            x_box.append(sol[14*k+(k-k//2)+2*nq])
+            y_box.append(sol[14*k+(k-k//2)+2*nq+1])
+            z_box.append(sol[14*k+(k-k//2)+2*nq+2])
             
             #JOINT VELOCITIES
             qcdot_opt = []
-            qcdot_opt.append(sol[14*k+(k-k/2)+2*nq+3:14*k+(k-k/2)+4*nq+3].tolist())
+            qcdot_opt.append(sol[14*k+(k-k//2)+2*nq+3:14*k+(k-k//2)+4*nq+3].tolist())
             qcdot_opt = qcdot_opt[0]
             #Extract first robot velocities
             q1dot_opt_f.append(qcdot_opt[0])
@@ -463,14 +463,14 @@ if (plot == 1):
             q5dot_opt_s.append(qcdot_opt[10])
             q6dot_opt_s.append(qcdot_opt[11])
             
-            Fzf_opt.append(sol[14*k+(k-k/2)+4*nq+3])
-            Fzs_opt.append(sol[14*k+(k-k/2)+4*nq+1+3])
+            Fzf_opt.append(sol[14*k+(k-k//2)+4*nq+3])
+            Fzs_opt.append(sol[14*k+(k-k//2)+4*nq+1+3])
             
         if (k == 2*N-1):
             k+=1
             qc_opt = []
             #JOINT ANGLES
-            qc_opt.append(sol[14*k+(k-k/2):14*k+(k-k/2)+2*nq].tolist())
+            qc_opt.append(sol[14*k+(k-k//2):14*k+(k-k//2)+2*nq].tolist())
             qc_opt = qc_opt[0]
             #Extract first robot coordinates
             q1_opt_f.append(qc_opt[0])
@@ -487,9 +487,9 @@ if (plot == 1):
             q5_opt_s.append(qc_opt[10])
             q6_opt_s.append(qc_opt[11])
             
-#            x_box.append(sol[14*k+(k-k/2)+2*nq])
-#            y_box.append(sol[14*k+(k-k/2)+2*nq+1])
-#            z_box.append(sol[14*k+(k-k/2)+2*nq+2])
+#            x_box.append(sol[14*k+(k-k//2)+2*nq])
+#            y_box.append(sol[14*k+(k-k//2)+2*nq+1])
+#            z_box.append(sol[14*k+(k-k//2)+2*nq+2])
             
             
             
@@ -622,12 +622,12 @@ if (plot == 1):
     plt.clf()
 #    plt.step(tgrid,vertcat(DM.nan(1), ubt_plot),'--')
 #    plt.step(tgrid,vertcat(DM.nan(1), lbt_plot),'--')
-    plt.step(tgrid,[DM.nan(1)] + tau1_opt_f,'--')
-    plt.step(tgrid,[DM.nan(1)] + tau2_opt_f,'--')
-    plt.step(tgrid,[DM.nan(1)] + tau3_opt_f,'--')
-    plt.step(tgrid,[DM.nan(1)] + tau4_opt_f,'--')
-    plt.step(tgrid,[DM.nan(1)] + tau5_opt_f,'--')
-    plt.step(tgrid,[DM.nan(1)] + tau6_opt_f,'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau1_opt_f],'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau2_opt_f],'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau3_opt_f],'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau4_opt_f],'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau5_opt_f],'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau6_opt_f],'--')
     plt.legend(['tau1_opt_f','tau2_opt_f','tau3_opt_f','tau4_opt_f','tau5_opt_f','tau6_opt_f'])
     plt.title('torque first variable in time plot')
     plt.grid()
@@ -636,12 +636,12 @@ if (plot == 1):
     plt.clf()
 #    plt.step(tgrid,vertcat(DM.nan(1), ubt_plot),'--')
 #    plt.step(tgrid,vertcat(DM.nan(1), lbt_plot),'--')
-    plt.step(tgrid,[DM.nan(1)] + tau1_opt_s,'--')
-    plt.step(tgrid,[DM.nan(1)] + tau2_opt_s,'--')
-    plt.step(tgrid,[DM.nan(1)] + tau3_opt_s,'--')
-    plt.step(tgrid,[DM.nan(1)] + tau4_opt_s,'--')
-    plt.step(tgrid,[DM.nan(1)] + tau5_opt_s,'--')
-    plt.step(tgrid,[DM.nan(1)] + tau6_opt_s,'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau1_opt_s],'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau2_opt_s],'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau3_opt_s],'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau4_opt_s],'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau5_opt_s],'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau6_opt_s],'--')
     plt.legend(['tau1_opt_s','tau2_opt_s','tau3_opt_s','tau4_opt_s','tau5_opt_s','tau6_opt_s'])
     plt.title('torque second variable in time plot')
     plt.grid()
@@ -680,13 +680,13 @@ if (plot == 1):
     plt.subplot(2,1,1)
     plt.step(tgrid,vertcat(DM.nan(1), lbg_torque[0]),'-')
     plt.step(tgrid,vertcat(DM.nan(1), ubg_torque[0]),'-')
-    plt.step(tgrid,[DM.nan(1)] + tau1_opt_s,'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau1_opt_s],'--')
     plt.title('tau1_opt_s')
     plt.grid()
     plt.subplot(2,1,2)
     plt.step(tgrid,vertcat(DM.nan(1), lbg_torque[1]),'-')
     plt.step(tgrid,vertcat(DM.nan(1), ubg_torque[1]),'-')
-    plt.step(tgrid,[DM.nan(1)] + tau2_opt_s,'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau2_opt_s],'--')
     plt.title('tau2_opt_s')
     #plt.ylim(0,1.0)
     plt.grid()
@@ -695,13 +695,13 @@ if (plot == 1):
     plt.subplot(2,1,1)
     plt.step(tgrid,vertcat(DM.nan(1), lbg_torque[2]),'-')
     plt.step(tgrid,vertcat(DM.nan(1), ubg_torque[2]),'-')
-    plt.step(tgrid,[DM.nan(1)] + tau3_opt_s,'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau3_opt_s],'--')
     plt.title('tau3_opt_s')
     plt.grid()
     plt.subplot(2,1,2)
     plt.step(tgrid,vertcat(DM.nan(1), lbg_torque[3]),'-')
     plt.step(tgrid,vertcat(DM.nan(1), ubg_torque[3]),'-')
-    plt.step(tgrid,[DM.nan(1)] + tau4_opt_s,'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau4_opt_s],'--')
     plt.title('tau4_opt_s')
     #plt.ylim(0,1.0)
     plt.grid()
@@ -710,13 +710,13 @@ if (plot == 1):
     plt.subplot(2,1,1)
     plt.step(tgrid,vertcat(DM.nan(1), lbg_torque[4]),'-')
     plt.step(tgrid,vertcat(DM.nan(1), ubg_torque[4]),'-')
-    plt.step(tgrid,[DM.nan(1)] + tau5_opt_s,'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau5_opt_s],'--')
     plt.title('tau5_opt_s')
     plt.grid()
     plt.subplot(2,1,2)
     plt.step(tgrid,vertcat(DM.nan(1), lbg_torque[5]),'-')
     plt.step(tgrid,vertcat(DM.nan(1), ubg_torque[5]),'-')
-    plt.step(tgrid,[DM.nan(1)] + tau6_opt_s,'--')
+    plt.step(tgrid,[np.nan] + [float(value) for value in tau6_opt_s],'--')
     plt.title('tau6_opt_s')
     #plt.ylim(0,1.0)
     plt.grid()

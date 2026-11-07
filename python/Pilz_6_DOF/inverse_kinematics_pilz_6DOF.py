@@ -30,24 +30,24 @@ J = dot(p_des - p, p_des - p)
 from casadi import *
 import rospy
 import mpc_fatigue.pynocchio_casadi as pin
-import talker_inv_kin_pilz_3DOF as ti
+import talker_inv_kin_pilz_6DOF as ti
 
 #----------------------------  Load the urdf  ---------------------------------
 urdf = rospy.get_param('/robot_description')
 
 # ---------------------- Solve forward kinematics  ----------------------------
 #Postion of link 5 in cartesian space (Solution to direct kinematics)
-fk_string = pin.generate_forward_kin(urdf, 'prbt_link_5')
+fk_string = pin.generate_forward_kin(urdf, 'prbt_flange')
 #Create casadi function
 fk = casadi.Function.deserialize(fk_string)
 #Look inside the fk function
 print(fk)
 
 #Variable q
-qc = SX.sym('qc', 3)
+qc = SX.sym('qc', 6)
 
 pos_link_5 = fk(q = qc)['ee_pos']
-pos_des_link_5 = SX([10.0,0.1,0.3])
+pos_des_link_5 = fk(q=[0.0]*6)['ee_pos'] + SX([0.02, 0.0, 0.0])
 
 
 J = dot(pos_link_5 - pos_des_link_5, pos_link_5 - pos_des_link_5)
@@ -57,7 +57,7 @@ prob = dict(x = qc, f = J)
 #Create solver interface
 solver = nlpsol('solver','ipopt', prob)
 
-sol = solver(x0 = [0.0,0.0,0.0])
+sol = solver(x0 = [0.0]*6)
 print(sol['x'])
 
 q = sol['x']

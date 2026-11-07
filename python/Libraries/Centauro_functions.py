@@ -5,6 +5,7 @@ from casadi import *
 import numpy as np
 import rospy
 import csv
+from pathlib import Path
 from visualization_msgs.msg import Marker
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Header
@@ -16,6 +17,7 @@ end_LA = 'mass1_ee'
 end_RA = 'mass2_ee'
 # General parameters
 nq = mpc.nq
+_solutions_dir = Path(__file__).resolve().parents[2] / 'Centauro_solutions'
 
 
 class Centauro_features:
@@ -93,60 +95,61 @@ def CompRPY(rot):
 
 #Save csv
 def SaveCsv(folder,qc_opt,qcd_opt,F_opt_glob, F_opt_loc,tau_LR,tau_RR,lbt,ubt,box_pos,box_rpy,Tw,lbtemp,ubtemp):
+    (_solutions_dir / folder).mkdir(parents=True, exist_ok=True)
 
     #Save the optimal joint angles
-    with open('/home/user/workspace/src/mpc_fatigue/Centauro_solutions/' + folder + '/qc_optimal.csv', 'wb') as myfile:
+    with open(str(_solutions_dir) + '/' + folder + '/qc_optimal.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(qc_opt)
     
     #Save the optimal joint velocities
-    with open('/home/user/workspace/src/mpc_fatigue/Centauro_solutions/' + folder + '/qcdot_optimal.csv', 'wb') as myfile:
+    with open(str(_solutions_dir) + '/' + folder + '/qcdot_optimal.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(qcd_opt)
     
     #Save the optimal global force at the two end effector
-    with open('/home/user/workspace/src/mpc_fatigue/Centauro_solutions/' + folder + '/F_optimal_glob.csv', 'wb') as myfile:
+    with open(str(_solutions_dir) + '/' + folder + '/F_optimal_glob.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(F_opt_glob)
         
     #Save the optimal local force at the two end effector
-    with open('/home/user/workspace/src/mpc_fatigue/Centauro_solutions/' + folder + '/F_optimal_loc.csv', 'wb') as myfile:
+    with open(str(_solutions_dir) + '/' + folder + '/F_optimal_loc.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(F_opt_loc)
     
-    with open('/home/user/workspace/src/mpc_fatigue/Centauro_solutions/' + folder + '/tauL_optimal.csv', 'wb') as myfile:
+    with open(str(_solutions_dir) + '/' + folder + '/tauL_optimal.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(tau_LR)
 
-    with open('/home/user/workspace/src/mpc_fatigue/Centauro_solutions/' + folder + '/tauR_optimal.csv', 'wb') as myfile:
+    with open(str(_solutions_dir) + '/' + folder + '/tauR_optimal.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(tau_RR)
         
-    with open('/home/user/workspace/src/mpc_fatigue/Centauro_solutions/'+ folder +'/lbt.csv', 'wb') as myfile:
+    with open(str(_solutions_dir) + '/'+ folder +'/lbt.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(lbt)
         
-    with open('/home/user/workspace/src/mpc_fatigue/Centauro_solutions/' +folder + '/ubt.csv', 'wb') as myfile:
+    with open(str(_solutions_dir) + '/' +folder + '/ubt.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(ubt)
 
-    with open('/home/user/workspace/src/mpc_fatigue/Centauro_solutions/'+ folder +'/box_pos.csv', 'wb') as myfile:
+    with open(str(_solutions_dir) + '/'+ folder +'/box_pos.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(box_pos)
         
-    with open('/home/user/workspace/src/mpc_fatigue/Centauro_solutions/' +folder + '/box_rpy.csv', 'wb') as myfile:
+    with open(str(_solutions_dir) + '/' +folder + '/box_rpy.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(box_rpy)
 
-    with open('/home/user/workspace/src/mpc_fatigue/Centauro_solutions/' + folder + '/Tw.csv', 'wb') as myfile:
+    with open(str(_solutions_dir) + '/' + folder + '/Tw.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(Tw)
 
-    with open('/home/user/workspace/src/mpc_fatigue/Centauro_solutions/' + folder + '/lbtemp.csv', 'wb') as myfile:
+    with open(str(_solutions_dir) + '/' + folder + '/lbtemp.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(lbtemp)
 
-    with open('/home/user/workspace/src/mpc_fatigue/Centauro_solutions/' + folder + '/ubtemp.csv', 'wb') as myfile:
+    with open(str(_solutions_dir) + '/' + folder + '/ubtemp.csv', 'w', newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(ubtemp)
 
@@ -241,9 +244,19 @@ def InvKin(BoxPos,L):
     opts = {"ipopt": {"print_level" : 0 }}
     solver = nlpsol('solver','ipopt', prob,opts)
     sol = solver(lbx = lbw , ubx = ubw)
+    if not solver.stats()['success']:
+        raise RuntimeError('Centauro inverse kinematics failed: ' + solver.stats()['return_status'])
 
     #
     qc_0 = sol['x']
+    desired_left = np.asarray(BoxPos, dtype=float).copy()
+    desired_right = desired_left.copy()
+    desired_left[1] += L / 2
+    desired_right[1] -= L / 2
+    left_error = np.linalg.norm(np.asarray(ForwKinLA(qc_0, 'pos')).reshape(3) - desired_left)
+    right_error = np.linalg.norm(np.asarray(ForwKinRA(qc_0, 'pos')).reshape(3) - desired_right)
+    if max(left_error, right_error) > 0.02:
+        rospy.logwarn('Centauro initial IK position error: left %.3f m, right %.3f m; check robot_description and task pose', left_error, right_error)
     print(" ")
     print("##################################")
     print("# Centauro initial condition is: #")
@@ -341,4 +354,7 @@ def RelativeOrientationError(qc):
     return(e_des)
 
 
-    
+# Older Centauro experiments import these names for the same initial-state
+# quantities. Keep both spellings available to their scripts.
+InitialRelativePosition = RelativePosition
+InitialRelativeOrientationError = RelativeOrientationError

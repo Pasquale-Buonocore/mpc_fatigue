@@ -187,7 +187,7 @@ q1dot_opt = []
 q2dot_opt = []
 q3dot_opt = []
 # -------------------------- q and qdot vectors ------------------------------
-ranghe = np.size(sol)/nq
+ranghe = np.size(sol)//nq
 for k in range(ranghe):
     if (k % 2 == 0):
         qc_opt.append(sol[3*k:3*k+3])
@@ -249,9 +249,9 @@ plt.figure(3)
 plt.clf()
 plt.step(tgrid,vertcat(DM.nan(1), ubt_plot),'--')
 plt.step(tgrid,vertcat(DM.nan(1), lbt_plot),'--')
-plt.step(tgrid,[DM.nan(1)] + tau1_opt,'--')
-plt.step(tgrid,[DM.nan(1)] + tau2_opt,'--')
-plt.step(tgrid,[DM.nan(1)] + tau3_opt,'--')
+plt.step(tgrid,[np.nan] + [float(value) for value in tau1_opt],'--')
+plt.step(tgrid,[np.nan] + [float(value) for value in tau2_opt],'--')
+plt.step(tgrid,[np.nan] + [float(value) for value in tau3_opt],'--')
 plt.legend(['ubg_plot','lgb_plot','tau1_opt','tau2_opt','tau3_opt'])
 plt.grid()
 plt.title('torque variable in time')

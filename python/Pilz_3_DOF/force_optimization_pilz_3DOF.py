@@ -212,7 +212,7 @@ print("ubw.shape:",ubw.shape)
 # Create the nlp solver
 nlp = dict(f = J, g = g, x = w)
 Solver = nlpsol('Solver','ipopt',nlp)
-r = Solver(lbx = lbw, ubx = ubw, lbg = lbg, ubg = ubg)   
+r = Solver(lbx = lbw, ubx = ubw, lbg = lbg, ubg = ubg)
     
 sol = r['x'].full().flatten()
 
@@ -227,25 +227,25 @@ q3dot_opt = []
 Fx_opt = []
 z_rect_opt = []
 
-ranghe = np.size(sol)/(2*nq+1)
+ranghe = np.size(sol)//(2*nq+1)
         
 for k in range(2*ranghe):
     if (k % 2 == 0):
-        qc_opt.append(sol[3*k+(k-k/2):3*k+(k-k/2)+nq])
-        q1_opt.append(sol[3*k+(k-k/2):3*k+(k-k/2)+nq][0])
-        q2_opt.append(sol[3*k+(k-k/2):3*k+(k-k/2)+nq][1])
-        q3_opt.append(sol[3*k+(k-k/2):3*k+(k-k/2)+nq][2])
-        qcdot_opt.append(sol[3*k+(k-k/2)+nq:3*k+(k-k/2)+2*nq])
-        q1dot_opt.append(sol[3*k+(k-k/2)+nq:3*k+(k-k/2)+2*nq][0])
-        q2dot_opt.append(sol[3*k+(k-k/2)+nq:3*k+(k-k/2)+2*nq][1])
-        q3dot_opt.append(sol[3*k+(k-k/2)+nq:3*k+(k-k/2)+2*nq][2])
-        Fx_opt.append(sol[3*k+(k-k/2)+2*nq])
+        qc_opt.append(sol[3*k+(k-k//2):3*k+(k-k//2)+nq])
+        q1_opt.append(sol[3*k+(k-k//2):3*k+(k-k//2)+nq][0])
+        q2_opt.append(sol[3*k+(k-k//2):3*k+(k-k//2)+nq][1])
+        q3_opt.append(sol[3*k+(k-k//2):3*k+(k-k//2)+nq][2])
+        qcdot_opt.append(sol[3*k+(k-k//2)+nq:3*k+(k-k//2)+2*nq])
+        q1dot_opt.append(sol[3*k+(k-k//2)+nq:3*k+(k-k//2)+2*nq][0])
+        q2dot_opt.append(sol[3*k+(k-k//2)+nq:3*k+(k-k//2)+2*nq][1])
+        q3dot_opt.append(sol[3*k+(k-k//2)+nq:3*k+(k-k//2)+2*nq][2])
+        Fx_opt.append(sol[3*k+(k-k//2)+2*nq])
     if (k == 2*N-1):
         k+=1
-        qc_opt.append(sol[3*k+(k-k/2):3*k+(k-k/2)+nq])
-        q1_opt.append(sol[3*k+(k-k/2):3*k+(k-k/2)+nq][0])
-        q2_opt.append(sol[3*k+(k-k/2):3*k+(k-k/2)+nq][1])
-        q3_opt.append(sol[3*k+(k-k/2):3*k+(k-k/2)+nq][2])
+        qc_opt.append(sol[3*k+(k-k//2):3*k+(k-k//2)+nq])
+        q1_opt.append(sol[3*k+(k-k//2):3*k+(k-k//2)+nq][0])
+        q2_opt.append(sol[3*k+(k-k//2):3*k+(k-k//2)+nq][1])
+        q3_opt.append(sol[3*k+(k-k//2):3*k+(k-k//2)+nq][2])
         
         
 #Select taus:
@@ -301,9 +301,9 @@ plt.figure(3)
 plt.clf()
 plt.step(tgrid,vertcat(DM.nan(1), ubt_plot),'--')
 plt.step(tgrid,vertcat(DM.nan(1), lbt_plot),'--')
-plt.step(tgrid,[DM.nan(1)] + tau1_opt,'--')
-plt.step(tgrid,[DM.nan(1)] + tau2_opt,'--')
-plt.step(tgrid,[DM.nan(1)] + tau3_opt,'--')
+plt.step(tgrid,[np.nan] + [float(value) for value in tau1_opt],'--')
+plt.step(tgrid,[np.nan] + [float(value) for value in tau2_opt],'--')
+plt.step(tgrid,[np.nan] + [float(value) for value in tau3_opt],'--')
 plt.legend(['ubg_plot','lgb_plot','tau1_opt','tau2_opt','tau3_opt'])
 plt.grid()
 plt.title('torque variable in time plot')

@@ -31,6 +31,9 @@ import time
 
 #Define the node name
 rospy.init_node('OCPsolver_node') #, anonymous=True)
+max_iterations = int(rospy.get_param('~max_iterations', 0))
+if max_iterations < 0:
+    raise ValueError('max_iterations must be nonnegative (0 means continuous execution)')
 #Define at which frequency the publisher will publish to the unroller node
 rate = rospy.Rate(mpc.OCP_solver_publish_rate) # 100hz
 
@@ -128,7 +131,7 @@ ciclo = 0
 nf = 3 # force components
 n = 3*nq + 2*nf # element solution of each step  
 
-while True:
+while not rospy.is_shutdown() and (max_iterations == 0 or s < max_iterations):
     print(" ")
     print("##################################")
     print("#         Solving OCP "  + str(s) +"          #")
@@ -253,9 +256,9 @@ while True:
         ex = R_skew[2,1]
         ey = R_skew[2,0]
         ez = R_skew[1,0]
-        e_k = np.array([ex,ey,ez])
-        
-        g.append(reshape(e_k,(3,1)) - RelativeOrientation_0)
+        e_k = vertcat(ex, ey, ez)
+
+        g.append(e_k - DM(np.asarray(RelativeOrientation_0).reshape(3)))
         lbg += np.zeros(3).tolist()  
         ubg += np.zeros(3).tolist()
                 
@@ -359,6 +362,8 @@ while True:
     else:
         r = Solver(x0 = sol0, lbx = lbw, ubx = ubw, lbg = lbg, ubg = ubg) 
 
+    if not Solver.stats()['success']:
+        raise RuntimeError('Centauro OCP failed: ' + Solver.stats()['return_status'])
     sol = r['x'].full().flatten()
 
     #Initial condition for the next OCP

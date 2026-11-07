@@ -28,8 +28,13 @@ import mpc_fatigue.pynocchio_casadi as pin
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
+import os
+from pathlib import Path
 import talker_inv_dyn_two_pilz_6DOF as ta
 import two_pilz_talker_inv_kin_6DOF as ti
+from solver_io import initial_guess_from_env
+plotter_dir = (Path(os.environ['MPC_PLOTTER_DIR']) if 'MPC_PLOTTER_DIR' in os.environ
+               else Path(__file__).resolve().parents[2] / 'plotter')
 
 ###############################################################################
 #--------------------------What do you want to do? ---------------------------#
@@ -39,7 +44,7 @@ import two_pilz_talker_inv_kin_6DOF as ti
 #SET OCP == True if you want to solve the OCP again
 
 class Check:
-   OCP = True
+   OCP = os.environ.get('MPC_RUN_OCP', '1') == '1'
    TorqueConstraint = True
    LeftConst = True
    RightConst = True
@@ -331,8 +336,8 @@ if Check.OCP == True:
                     else:
                         lbg += [-1.0]
                         ubg += [1.0]
-                        tau_RR1.append(-5.0)
-                        tau_RR1.append(5.0)
+                        tau_RR1.append(-1.0)
+                        tau_RR1.append(1.0)
     
                     g.append(tauRR[2])
                     if k < int(N/3):
@@ -348,8 +353,8 @@ if Check.OCP == True:
                     else:
                         lbg += [-2.0] 
                         ubg += [2.0]
-                        tau_RR2.append(-10.0)
-                        tau_RR2.append(5.0)
+                        tau_RR2.append(-2.0)
+                        tau_RR2.append(2.0)
                         
                     g.append(tauRR[3])
                     if k < int(N/3):
@@ -412,7 +417,7 @@ if Check.OCP == True:
                     else:
                         lbg += [-5.0]
                         ubg += [5.0]
-                        tau_LR0.append(-0.0)
+                        tau_LR0.append(-5.0)
                         tau_LR0.append(5.0)
                         
                     g.append(tauLR[1])
@@ -492,7 +497,11 @@ if Check.OCP == True:
     # Create the nlp solver
     nlp = dict(f = J, g = g, x = w)
     Solver = nlpsol('Solver','ipopt',nlp)
-    r = Solver(lbx = lbw, ubx = ubw, lbg = lbg, ubg = ubg)   
+    initial_guess = initial_guess_from_env(w.numel())
+    if initial_guess is None:
+        r = Solver(lbx = lbw, ubx = ubw, lbg = lbg, ubg = ubg)
+    else:
+        r = Solver(x0 = initial_guess, lbx = lbw, ubx = ubw, lbg = lbg, ubg = ubg)
         
     sol = r['x'].full().flatten()
     
@@ -500,7 +509,9 @@ if Check.OCP == True:
     print('############## Creating csv file ############## ')
     
     #Save the solution in a CSV file
-    with open('/home/user/workspace/src/mpc_fatigue/plotter/solution.csv', 'wb') as myfile:
+    plotter_dir.mkdir(parents=True, exist_ok=True)
+    solution_csv = plotter_dir / 'solution.csv'
+    with open(solution_csv, 'w', newline='') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(sol)
         
@@ -511,10 +522,10 @@ if Check.Plot == True or Check.OCP == True:
     
     sol = []
     
-    with open('/home/user/workspace/src/mpc_fatigue/plotter/solution.csv', 'rb') as solution:
-        for line in solution:
-            x = line.split(',')
-            for val in x:
+    solution_csv = plotter_dir / 'solution.csv'
+    with open(solution_csv, newline='') as solution:
+        for row in csv.reader(solution):
+            for val in row:
                 sol.append(float(val))
                 
     nf = 3 # force component
@@ -554,7 +565,9 @@ if Check.Plot == True or Check.OCP == True:
 
 #------------------- JOINT ANGLES AND JOINT VELOCITIES PLOTS -----------------#
 if Check.Plot == True :   
-    pwd = '/home/user/workspace/src/mpc_fatigue/plotter/figure_folder/'
+    figure_folder = plotter_dir / 'figure_folder'
+    figure_folder.mkdir(parents=True, exist_ok=True)
+    pwd = str(figure_folder) + '/'
     form = 'png' #or svg
     print('')
     print('############## Creating and saving images ############## ')
@@ -573,10 +586,10 @@ if Check.Plot == True :
                 plot = qc_opt
                 kind = 'angles'
             plt.figure(r)
-            plt.suptitle(rob[i-1] + ' robot '+ ' joint '+ kind)
+            plt.suptitle(rob[robot-1] + ' robot '+ ' joint '+ kind)
             #Plot all the states
             for j in range(nq): 
-                plt.subplot(2,nq/2,j+1)
+                plt.subplot(2,nq//2,j+1)
                 plt.title('Joint ' + str(j))
                 if (robot == narm): j = j + nq
                 plt.step(tgrid,plot[j::2*nq],'-')
@@ -600,7 +613,7 @@ if Check.Plot == True :
         plt.suptitle(str(robot) + ' robot '+ 'torques' )
         #Plot all the torques
         for j in range(nq): 
-            plt.subplot(2,nq/2,j+1)
+            plt.subplot(2,nq//2,j+1)
             plt.title('Joint ' + str(j) + ' torque')
             plt.step(tgrid,plot[j::nq],'-')
             if Check.OCP == True:
@@ -614,10 +627,10 @@ if Check.Plot == True :
                     elif j == 2 and tau_RR2 != []:
                         plt.plot(tgrid,tau_RR2[0::2],'--')
                         plt.plot(tgrid,tau_RR2[1::2],'--')
-                    elif j == 3 and tau_RR1 != []:
+                    elif j == 3 and tau_RR3 != []:
                         plt.plot(tgrid,tau_RR3[0::2],'--')
                         plt.plot(tgrid,tau_RR3[1::2],'--')
-                    elif j == 4 and tau_RR2 != []:
+                    elif j == 4 and tau_RR4 != []:
                         plt.plot(tgrid,tau_RR4[0::2],'--')
                         plt.plot(tgrid,tau_RR4[1::2],'--')
                 else:
@@ -644,10 +657,10 @@ if Check.Plot == True :
             robot = 'Right'
             
         plt.suptitle( str(robot) + ' robot ' + ' end effector force')
-        for j in range(nq/2):
-            plt.subplot(nq/2,1,j+1)
+        for j in range(nq//2):
+            plt.subplot(nq//2,1,j+1)
             plt.title('Force ' + axis[j])
-            if (f == narm): j = j + nq/2
+            if (f == narm): j = j + nq//2
             plt.step(tgrid,F_opt[j::nq],'-')
             #plt.ylim(-5.0,200.0)
             plt.grid()
@@ -662,17 +675,3 @@ if Check.Plot == True :
     #plt.show()
     
     print('ciao')
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        

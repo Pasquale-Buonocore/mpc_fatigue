@@ -32,7 +32,8 @@ class mpc:
     MySolver = "ipopt"          # sqpmethod or ipopt'''
 
     #Here you can define the initial position of the box and its length
-    box_initial_position = np.array([1.1, 0.0 , 1.2]) #0.9 0.0 1.0
+    # Reachable with the public reduced Centauro model; original study: [1.1, 0, 1.2].
+    box_initial_position = np.array([0.8, 0.0, 0.8])
     Lbox = 0.5 #0.4 
 
     
@@ -50,5 +51,3 @@ class mpc:
     
     #Friction coefficient
     mu = 0.4   #0.3
-    
-    
