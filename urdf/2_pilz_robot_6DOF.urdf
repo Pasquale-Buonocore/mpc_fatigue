@@ -34,7 +34,7 @@ limitations under the License.
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://manipulator/meshes/reliable_folder/foot.dae"/>
+        <mesh filename="package://mpc_fatigue/meshes/reliable_folder/foot.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -63,7 +63,7 @@ limitations under the License.
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://manipulator/meshes/reliable_folder/link_1.dae"/>
+        <mesh filename="package://mpc_fatigue/meshes/reliable_folder/link_1.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -103,7 +103,7 @@ limitations under the License.
     <visual name="first">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://manipulator/meshes/reliable_folder/link_2.dae"/>
+        <mesh filename="package://mpc_fatigue/meshes/reliable_folder/link_2.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -137,7 +137,7 @@ limitations under the License.
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://manipulator/meshes/reliable_folder/link_3.dae"/>
+        <mesh filename="package://mpc_fatigue/meshes/reliable_folder/link_3.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -177,7 +177,7 @@ limitations under the License.
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://manipulator/meshes/reliable_folder/link_4.dae"/>
+        <mesh filename="package://mpc_fatigue/meshes/reliable_folder/link_4.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -211,7 +211,7 @@ limitations under the License.
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://manipulator/meshes/reliable_folder/link_5.dae"/>
+        <mesh filename="package://mpc_fatigue/meshes/reliable_folder/link_5.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -264,7 +264,7 @@ limitations under the License.
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://manipulator/meshes/reliable_folder/flange.dae"/>
+        <mesh filename="package://mpc_fatigue/meshes/reliable_folder/flange.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -309,7 +309,7 @@ limitations under the License.
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://manipulator/meshes/reliable_folder/foot.dae"/>
+        <mesh filename="package://mpc_fatigue/meshes/reliable_folder/foot.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -347,7 +347,7 @@ limitations under the License.
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://manipulator/meshes/reliable_folder/link_1.dae"/>
+        <mesh filename="package://mpc_fatigue/meshes/reliable_folder/link_1.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -387,7 +387,7 @@ limitations under the License.
     <visual name="sec_first">
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://manipulator/meshes/reliable_folder/link_2.dae"/>
+        <mesh filename="package://mpc_fatigue/meshes/reliable_folder/link_2.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -421,7 +421,7 @@ limitations under the License.
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://manipulator/meshes/reliable_folder/link_3.dae"/>
+        <mesh filename="package://mpc_fatigue/meshes/reliable_folder/link_3.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -461,7 +461,7 @@ limitations under the License.
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://manipulator/meshes/reliable_folder/link_4.dae"/>
+        <mesh filename="package://mpc_fatigue/meshes/reliable_folder/link_4.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -495,7 +495,7 @@ limitations under the License.
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://manipulator/meshes/reliable_folder/link_5.dae"/>
+        <mesh filename="package://mpc_fatigue/meshes/reliable_folder/link_5.dae"/>
       </geometry>
     </visual>
     <collision>
@@ -548,7 +548,7 @@ limitations under the License.
     <visual>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <geometry>
-        <mesh filename="package://manipulator/meshes/reliable_folder/flange.dae"/>
+        <mesh filename="package://mpc_fatigue/meshes/reliable_folder/flange.dae"/>
       </geometry>
     </visual>
     <collision>

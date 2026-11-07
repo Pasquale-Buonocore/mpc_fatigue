@@ -1,10 +1,13 @@
 <launch>
 
     <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find mpc_fatigue)/urdf/pilz_robot_3DOF.urdf'"/>
-    <node name="rviz" pkg="rviz" type="rviz"/>
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find mpc_fatigue)/config/pilz.rviz"/>
+
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+        <rosparam param="source_list">[topic_position_from_invkin]</rosparam>
+    </node>
 
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
-        <remap from="joint_states" to = "topic_position_from_invkin" />
     </node>
     
 </launch>
